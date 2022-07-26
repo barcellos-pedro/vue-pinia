@@ -7,15 +7,17 @@ export default createStore({
     events: [],
     event: {}
   },
+  getters: {
+    numberOfEvents(state) {
+      return state.events.length
+    }
+  },
   mutations: {
     ADD_EVENT(state, event) {
       state.events.push(event)
     },
     SET_EVENT(state, event) {
       state.event = event
-    },
-    SET_EVENTS(state, events) {
-      state.events = events
     }
   },
   actions: {
@@ -28,28 +30,14 @@ export default createStore({
           throw error
         })
     },
-    fetchEvents({ commit }) {
-      return EventService.getEvents()
+    fetchEvent({ commit }, id) {
+      return EventService.getEvent(id)
         .then(response => {
-          commit('SET_EVENTS', response.data)
+          commit('SET_EVENT', response.data)
         })
         .catch(error => {
           throw error
         })
-    },
-    fetchEvent({ commit, state }, id) {
-      const existingEvent = state.events.find(event => event.id === id)
-      if (existingEvent) {
-        commit('SET_EVENT', existingEvent)
-      } else {
-        return EventService.getEvent(id)
-          .then(response => {
-            commit('SET_EVENT', response.data)
-          })
-          .catch(error => {
-            throw error
-          })
-      }
     }
   },
   modules: {}
